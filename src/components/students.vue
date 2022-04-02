@@ -19,20 +19,20 @@
 </template>
 
 <script>
-import firebaseApp from "@/firebaseDetails";
-import { getAuth } from "firebase/auth";
+import firebaseApp from '@/firebaseDetails';
+import { getAuth } from 'firebase/auth';
 import {
     collection,
     getDocs,
     query,
     where,
-    getFirestore,
-} from "firebase/firestore";
+    getFirestore
+} from 'firebase/firestore';
 
 const db = getFirestore(firebaseApp);
 
 export default {
-    name: "students",
+    name: 'students',
 
     mounted() {
         const auth = getAuth();
@@ -43,31 +43,31 @@ export default {
         async function displayStudents() {
             // Find all the groups this teacher is in
             const q1 = query(
-                collection(db, "users"),
-                where("email", "==", authEmail)
+                collection(db, 'groups'),
+                where('email', '==', authEmail)
             );
             const querySnapshot = await getDocs(q1);
-            const currentGroups = querySnapshot.docs[0].get("groups");
-            const groupsArray = Object.values(currentGroups);
+            // const currentGroups = querySnapshot.docs[0].get('groups');
+            // const groupsArray = Object.values(currentGroups);
 
-            // Find all the users that exists in the same group
-            const q2 = query(
-                collection(db, "users"),
-                where("groups", "array-contains-any", groupsArray)
-            );
-            const querySnapshot2 = await getDocs(q2);
+            // // Find all the users that exists in the same group
+            // const q2 = query(
+            //     collection(db, 'users'),
+            //     where('groups', 'array-contains-any', groupsArray)
+            // );
+            // const querySnapshot2 = await getDocs(q2);
 
             let ind = 1;
 
-            querySnapshot2.forEach((doc) => {
+            querySnapshot.forEach((doc) => {
                 let student = doc.data();
-                var table = document.getElementById("studentList");
+                var table = document.getElementById('studentList');
                 var row = table.insertRow(ind);
 
                 var role = student.role;
 
                 // If the user is a teacher, exclude from the output
-                if (role == "Teacher") {
+                if (role == 'Teacher') {
                     return;
                 }
 
@@ -92,16 +92,22 @@ export default {
         }
         displayStudents();
     },
+    methods: {
+        async routeToAddStudent() {
+            await this.$router.push({ name: 'addStudent' });
+        }
+    }
 };
 </script>
 
 <style scoped>
 table {
-    font-family: "Times New Roman";
+    font-family: 'Times New Roman';
     color: #222c4b;
     border-collapse: collapse;
     width: 100%;
     background-color: white;
+    border: 1px solid black;
 }
 
 tr:nth-child(even) {
@@ -114,5 +120,10 @@ td {
     text-align: center;
     padding: 8px;
     background-color: white;
+}
+
+th {
+    background-color: black;
+    color: white;
 }
 </style>

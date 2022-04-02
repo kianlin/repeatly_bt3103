@@ -9,67 +9,73 @@ import deckCreation from '@/views/deckCreation';
 import deckDetails from '@/views/deckDetails';
 import cardsManagement from '@/views/cardsManagement';
 import studentsPage from '@/views/studentsPage';
+import studentAddition from '@/views/studentAddition';
 
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home,
-    redirect: '/login',
-    children: [
-      {
-        path: '/login',
-        name: 'login',
-        component: login,
-      },
-      {
-        path: '/registration',
-        name: 'register',
-        component: registration,
-      },
-      {
-        path: '/resetPassword',
-        name: 'resetPassword',
-        component: resetPassword,
-      },
-    ],
-  },
-  {
-    path: '/Dashboard',
-    name: 'Dashboard',
-    component: overallDashboard,
-    redirect: '/userDash',
-    children: [
-      {
-        path: '/userDash',
-        name: 'userDash',
-        component: userDashboard,
-      },
-    ],
-  },
-  {
-    path: '/createDeck',
-    name: 'createDeck',
-    component: deckCreation,
-  },
-  {
-    path: '/viewDeck',
-    name: 'viewDeck',
-    component: deckDetails,
-  },
-  {
-    path: '/editCards',
-    name: 'cardsManagement',
-    component: cardsManagement,
-  },
-  {
-    path: '/students',
-    name: 'studentsPage',
-    component: studentsPage,
-  },
+    {
+        path: '/',
+        name: 'Home',
+        component: Home,
+        redirect: '/login',
+        children: [
+            {
+                path: '/login',
+                name: 'login',
+                component: login
+            },
+            {
+                path: '/registration',
+                name: 'register',
+                component: registration
+            },
+            {
+                path: '/resetPassword',
+                name: 'resetPassword',
+                component: resetPassword
+            }
+        ]
+    },
+    {
+        path: '/Dashboard',
+        name: 'Dashboard',
+        component: overallDashboard,
+        redirect: '/userDash',
+        children: [
+            {
+                path: '/userDash',
+                name: 'userDash',
+                component: userDashboard
+            }
+        ]
+    },
+    {
+        path: '/createDeck',
+        name: 'createDeck',
+        component: deckCreation
+    },
+    {
+        path: '/viewDeck',
+        name: 'viewDeck',
+        component: deckDetails
+    },
+    {
+        path: '/editCards',
+        name: 'cardsManagement',
+        component: cardsManagement
+    },
+    {
+        path: '/students',
+        name: 'studentsPage',
+        component: studentsPage
+    },
+    {
+        path: '/addStudent',
+        name: 'addStudent',
+        component: studentAddition
+    }
 ];
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+    history: createWebHistory(),
+    routes
 });
 export default router;
