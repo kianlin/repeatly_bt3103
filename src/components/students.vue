@@ -44,7 +44,7 @@ export default {
             // Find all the groups this teacher is in
             const q1 = query(
                 collection(db, 'groups'),
-                where('email', '==', authEmail)
+                where('Teacher', '==', authEmail)
             );
             const querySnapshot = await getDocs(q1);
             // const currentGroups = querySnapshot.docs[0].get('groups');
@@ -58,37 +58,54 @@ export default {
             // const querySnapshot2 = await getDocs(q2);
 
             let ind = 1;
-
+            var allGroups = [];
             querySnapshot.forEach((doc) => {
-                let student = doc.data();
-                var table = document.getElementById('studentList');
-                var row = table.insertRow(ind);
-
-                var role = student.role;
-
-                // If the user is a teacher, exclude from the output
-                if (role == 'Teacher') {
-                    return;
-                }
-
-                var name = student.username;
-                var email = student.email;
-                var groups = student.groups;
-
-                var cell1 = row.insertCell(0);
-                var cell2 = row.insertCell(1);
-                var cell3 = row.insertCell(2);
-                var cell4 = row.insertCell(3);
-                var cell5 = row.insertCell(4);
-
-                cell1.innerHTML = ind;
-                cell2.innerHTML = name;
-                cell3.innerHTML = email;
-                cell4.innerHTML = role;
-                cell5.innerHTML = groups;
-
-                ind += 1;
+                let groupID = doc.data().groupID;
+                allGroups.push(groupID);
             });
+
+            for (const grpID of allGroups) {
+                let allStudents = await getDocs(
+                    collection(db, 'groups', grpID, 'students')
+                );
+                allStudents.forEach((doc) => {
+                    let student = doc.data();
+                    console.log('Students: ' + student);
+                    var table = document.getElementById('studentList');
+                    var row = table.insertRow(ind);
+
+                    var role = student.role;
+
+                    // If the user is a teacher, exclude from the output
+                    if (role == 'Teacher') {
+                        return;
+                    }
+
+                    var name = student.username;
+                    var email = student.email;
+                    var groups = grpID;
+
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    var cell3 = row.insertCell(2);
+                    var cell4 = row.insertCell(3);
+                    var cell5 = row.insertCell(4);
+
+                    cell1.style.border = '1px solid #000';
+                    cell2.style.border = '1px solid #000';
+                    cell3.style.border = '1px solid #000';
+                    cell4.style.border = '1px solid #000';
+                    cell5.style.border = '1px solid #000';
+
+                    cell1.innerHTML = ind;
+                    cell2.innerHTML = name;
+                    cell3.innerHTML = email;
+                    cell4.innerHTML = role;
+                    cell5.innerHTML = groups;
+
+                    ind += 1;
+                });
+            }
         }
         displayStudents();
     },

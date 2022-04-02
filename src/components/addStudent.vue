@@ -32,13 +32,7 @@
 <script>
 import firebaseApp from '@/firebaseDetails';
 // import { getAuth } from 'firebase/auth';
-import {
-    doc,
-    collection,
-    addDoc,
-    getDoc,
-    getFirestore
-} from 'firebase/firestore';
+import { doc, setDoc, getDoc, getFirestore } from 'firebase/firestore';
 
 // const auth = getAuth();
 const db = getFirestore(firebaseApp);
@@ -66,15 +60,45 @@ export default {
                 const groupName = document
                     .getElementById('assignedGroup')
                     .value.toString();
-                // const userEmail = auth.currentUser.email;
-                await addDoc(
-                    collection(db, 'groups', String(groupName), 'students'),
-                    {
-                        email: email,
-                        username: student.username,
-                        role: student.role
+
+                // Check if student is already in the group. Else, add them in.
+                try {
+                    const studentRef = doc(
+                        db,
+                        'group',
+                        groupName,
+                        'students',
+                        email
+                    );
+                    const studentSnap = await getDoc(studentRef);
+                    if (studentSnap.exists) {
+                        console.log('Student already enrolled in ' + groupName);
+                    } else {
+                        const newStudent = await setDoc(
+                            doc(
+                                db,
+                                'groups',
+                                String(groupName),
+                                'students',
+                                email
+                            ),
+                            {
+                                email: email,
+                                username: student.username,
+                                role: student.role
+                            }
+                        );
+                        console.log(newStudent);
+                        console.log(
+                            'New student enrolled to Group: ' + groupName
+                        );
                     }
-                );
+                } catch (error) {
+                    console.log(
+                        'Student failed to be enrolled to Group: ' + groupName
+                    );
+                    console.log(error);
+                }
                 await this.$router.push({ name: 'Dashboard' });
             } catch (error) {
                 console.log(error);
