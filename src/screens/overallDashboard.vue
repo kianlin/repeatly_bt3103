@@ -1,14 +1,15 @@
 <template>
     <div id="nav">
         <router-link to="/userDash">Home</router-link> |
-        <router-link to="/students">Students</router-link>
+        <router-link to="/students">Students</router-link> |
+        <router-link to="/groups">Groups</router-link>
     </div>
     <router-view />
 </template>
 
 <script>
 export default {
-    name: "overallDashboard",
+    name: 'overallDashboard'
 };
 </script>
 

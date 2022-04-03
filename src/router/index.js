@@ -10,6 +10,10 @@ import deckDetails from '@/views/deckDetails';
 import cardsManagement from '@/views/cardsManagement';
 import studentsPage from '@/views/studentsPage';
 import studentAddition from '@/views/studentAddition';
+import groupsPage from '@/views/groupsPage';
+import groupAddition from '@/views/groupAddition';
+import groupDetails from '@/views/groupDetails';
+import groupEdit from '@/views/groupEdit';
 
 const routes = [
     {
@@ -72,6 +76,26 @@ const routes = [
         path: '/addStudent',
         name: 'addStudent',
         component: studentAddition
+    },
+    {
+        path: '/groups',
+        name: 'groupsPage',
+        component: groupsPage
+    },
+    {
+        path: '/addGroup',
+        name: 'addGroup',
+        component: groupAddition
+    },
+    {
+        path: '/viewGroup',
+        name: 'viewGroup',
+        component: groupDetails
+    },
+    {
+        path: '/editGroup',
+        name: 'editGroup',
+        component: groupEdit
     }
 ];
 const router = createRouter({
