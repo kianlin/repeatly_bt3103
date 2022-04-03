@@ -47,15 +47,6 @@ export default {
                 where('Teacher', '==', authEmail)
             );
             const querySnapshot = await getDocs(q1);
-            // const currentGroups = querySnapshot.docs[0].get('groups');
-            // const groupsArray = Object.values(currentGroups);
-
-            // // Find all the users that exists in the same group
-            // const q2 = query(
-            //     collection(db, 'users'),
-            //     where('groups', 'array-contains-any', groupsArray)
-            // );
-            // const querySnapshot2 = await getDocs(q2);
 
             let ind = 1;
             var allGroups = [];

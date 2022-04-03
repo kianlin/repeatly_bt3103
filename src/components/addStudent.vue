@@ -10,14 +10,26 @@
                     required=""
                     placeholder="Enter student email"
                 />
-                <!-- <div class="groupSelection"> -->
-                <label for="groups">Groups:</label>
-                <select id="assignedGroup" name="assignedGroup">
-                    <option>BT3103</option>
-                    <option>group2</option>
-                </select>
-                <br /><br />
-                <!-- </div> -->
+                <div class="groupSelection">
+                    <label for="groups">Groups:</label>
+                    <input
+                        type="text"
+                        id="assignedGroup"
+                        required=""
+                        placeholder="Enter group name"
+                    />
+                    <!-- <select id="assignedGroup" name="assignedGroup">
+                        <option :selected="true">Choose Group</option>
+                        <option
+                            v-for="group in groups"
+                            :value="group"
+                            v-bind:key="group"
+                        >
+                            {{ group }}
+                        </option>
+                    </select> -->
+                    <br /><br />
+                </div>
                 <div class="save">
                     <button id="savebutton" type="button" v-on:click="save()">
                         Add Student</button
@@ -34,14 +46,18 @@ import firebaseApp from '@/firebaseDetails';
 // import { getAuth } from 'firebase/auth';
 import { doc, setDoc, getDoc, getFirestore } from 'firebase/firestore';
 
-// const auth = getAuth();
 const db = getFirestore(firebaseApp);
 
-async function getStudent(email) {
+async function getUser(email) {
     try {
         const docRef = doc(db, 'users', email);
         const docVal = await getDoc(docRef);
-        return docVal.data();
+        if (docVal.exists()) {
+            console.log('Student in database!');
+            return docVal.data();
+        } else {
+            console.log('Student not registered in database!');
+        }
     } catch (error) {
         console.log('Display Student not working');
         console.log(error);
@@ -53,45 +69,47 @@ export default {
     methods: {
         async save() {
             try {
-                // const email = document.getElementById('studentEmail').value;
                 const email = document.getElementById('studentEmail').value;
-                const student = await getStudent(email);
-                console.log(student);
+                const student = await getUser(email);
+                console.log('Student found: ' + student);
                 const groupName = document
                     .getElementById('assignedGroup')
                     .value.toString();
 
                 // Check if student is already in the group. Else, add them in.
                 try {
-                    const studentRef = doc(
-                        db,
-                        'group',
-                        groupName,
-                        'students',
-                        email
-                    );
-                    const studentSnap = await getDoc(studentRef);
-                    if (studentSnap.exists) {
-                        console.log('Student already enrolled in ' + groupName);
+                    const groupRef = doc(db, 'groups', groupName);
+                    const groupSnap = await getDoc(groupRef);
+                    if (groupSnap.exists()) {
+                        const studentRef = doc(
+                            db,
+                            'groups',
+                            groupName,
+                            'students',
+                            email
+                        );
+                        const studentSnap = await getDoc(studentRef);
+                        if (studentSnap.exists()) {
+                            console.log(
+                                'Student already enrolled in ' + groupName
+                            );
+                        } else {
+                            const newStudent = await setDoc(
+                                doc(db, 'groups', groupName, 'students', email),
+                                {
+                                    email: email,
+                                    username: student.username,
+                                    role: student.role
+                                }
+                            );
+                            console.log(newStudent);
+                            console.log(
+                                'New student enrolled to Group: ' + groupName
+                            );
+                        }
                     } else {
-                        const newStudent = await setDoc(
-                            doc(
-                                db,
-                                'groups',
-                                String(groupName),
-                                'students',
-                                email
-                            ),
-                            {
-                                email: email,
-                                username: student.username,
-                                role: student.role
-                            }
-                        );
-                        console.log(newStudent);
-                        console.log(
-                            'New student enrolled to Group: ' + groupName
-                        );
+                        console.log('Group (' + groupName + ') do not exists!');
+                        await this.$router.push({ name: 'studentsPage' });
                     }
                 } catch (error) {
                     console.log(
@@ -99,7 +117,7 @@ export default {
                     );
                     console.log(error);
                 }
-                await this.$router.push({ name: 'Dashboard' });
+                await this.$router.push({ name: 'studentsPage' });
             } catch (error) {
                 console.log(error);
                 console.log('Add Student failed');
