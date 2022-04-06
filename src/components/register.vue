@@ -190,36 +190,36 @@
 </template>
 
 <script>
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import firebaseApp from "../firebaseDetails.js";
-import { doc, setDoc, getFirestore } from "firebase/firestore";
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import firebaseApp from '../firebaseDetails.js';
+import { doc, setDoc, getFirestore } from 'firebase/firestore';
 
 const db = getFirestore(firebaseApp);
 
 export default {
-    name: "register",
+    name: 'register',
     methods: {
         async register() {
             const auth = getAuth();
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            const userName = document.getElementById("username").value;
-            const day = document.getElementById("day").value.toString();
-            const month = document.getElementById("month").value.toString();
-            const year = document.getElementById("year").value.toString();
-            const dob = year + "/" + month + "/" + day;
-            const isTeacher = document.getElementById("isTeacher").checked;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const userName = document.getElementById('username').value;
+            const day = document.getElementById('day').value.toString();
+            const month = document.getElementById('month').value.toString();
+            const year = document.getElementById('year').value.toString();
+            const dob = year + '/' + month + '/' + day;
+            const isTeacher = document.getElementById('isTeacher').checked;
 
-            var role = "Student";
+            var role = 'student';
             // console.log("Checkbox value:" + isTeacher);
 
             if (isTeacher) {
                 // console.log("I am a Teacher:" + isTeacher);
-                role = "Teacher";
+                role = 'teacher';
             }
             // console.log("My role is:" + role);
 
-            alert("registering account");
+            alert('registering account');
             try {
                 const userDetails = await createUserWithEmailAndPassword(
                     auth,
@@ -227,24 +227,23 @@ export default {
                     password
                 );
                 const userDocRef = await setDoc(
-                    doc(db, "users", userDetails.user.email),
+                    doc(db, 'users', userDetails.user.email),
                     {
                         username: userName,
                         email: userDetails.user.email,
                         DOB: dob,
-                        role: role,
-                        groups: [],
+                        role: role
                     }
                 );
                 console.log(userDetails.user);
                 console.log(userDocRef);
-                console.log("registration pass");
+                console.log('registration pass');
             } catch (error) {
-                console.log("registration fail");
+                console.log('registration fail');
                 console.log(error);
             }
-        },
-    },
+        }
+    }
 };
 </script>
 

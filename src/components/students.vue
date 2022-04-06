@@ -44,7 +44,7 @@ export default {
             // Find all the groups this teacher is in
             const q1 = query(
                 collection(db, 'groups'),
-                where('Teacher', '==', authEmail)
+                where('teacherEmail', '==', authEmail)
             );
             const querySnapshot = await getDocs(q1);
 
@@ -68,7 +68,7 @@ export default {
                     var role = student.role;
 
                     // If the user is a teacher, exclude from the output
-                    if (role == 'Teacher') {
+                    if (role == 'teacher') {
                         return;
                     }
 

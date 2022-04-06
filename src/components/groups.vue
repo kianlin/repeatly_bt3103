@@ -24,6 +24,8 @@ import firebaseApp from '@/firebaseDetails';
 import { getAuth } from 'firebase/auth';
 import {
     collection,
+    doc,
+    getDoc,
     getDocs,
     query,
     where,
@@ -32,6 +34,22 @@ import {
 import router from '@/router';
 
 const db = getFirestore(firebaseApp);
+
+async function getUser(email) {
+    try {
+        const docRef = doc(db, 'users', email);
+        const docVal = await getDoc(docRef);
+        if (docVal.exists()) {
+            console.log('User in database!');
+            return docVal.data();
+        } else {
+            console.log('User not registered in database!');
+        }
+    } catch (error) {
+        console.log('User Student not working');
+        console.log(error);
+    }
+}
 
 export default {
     name: 'groups',
@@ -42,27 +60,48 @@ export default {
         console.log(authEmail);
 
         async function displayGroups() {
-            // Find all the groups this teacher is in
-            const q1 = query(
-                collection(db, 'groups'),
-                where('teacherEmail', '==', authEmail)
-            );
+            const currUser = await getUser(authEmail);
+            var q1 = query(collection(db, 'groups'));
+            if (currUser.role == 'teacher') {
+                console.log('Current User Role: ' + 'teacher');
+                // Find all the groups this teacher is in
+                q1 = query(
+                    collection(db, 'groups'),
+                    where('teacherEmail', '==', authEmail)
+                );
+            } else {
+                console.log('Current User Role: ' + 'student');
+            }
+
             const querySnapshot = await getDocs(q1);
 
-            // var idList = [];
             let ind = 1;
-            querySnapshot.forEach((doc) => {
-                let group = doc.data();
-                // let docID = group.id;
-                // idList.push(docID);
-                console.log('Group: ' + group);
-                var table = document.getElementById('groupList');
-                var row = table.insertRow(ind);
+            for (const docu of querySnapshot.docs) {
+                let group = docu.data();
+                // console.log('DOC ID like that: ' + docu.id);
+                if (currUser.role != 'teacher') {
+                    let student = await getDoc(
+                        doc(
+                            db,
+                            'groups',
+                            String(group.groupID),
+                            'students',
+                            String(authEmail)
+                        )
+                    );
 
-                var name = group.groupID;
-                var description = group.description;
-                var teacherName = group.teacherName;
-                var teacherEmail = group.teacherEmail;
+                    if (!student.exists()) {
+                        continue;
+                    }
+                }
+
+                let table = document.getElementById('groupList');
+                let row = table.insertRow(ind);
+
+                let name = group.groupID;
+                let description = group.description;
+                let teacherName = group.teacherName;
+                let teacherEmail = group.teacherEmail;
 
                 var cell1 = row.insertCell(0);
                 var cell2 = row.insertCell(1);
@@ -99,7 +138,7 @@ export default {
                 };
                 cell6.appendChild(accessButt);
                 ind += 1;
-            });
+            }
         }
         displayGroups();
     },

@@ -35,7 +35,6 @@ import { doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
 
 const auth = getAuth();
 const db = getFirestore(firebaseApp);
-const grpID = sessionStorage.getItem('currGroup');
 
 export default {
     name: 'editGroup',
@@ -45,6 +44,7 @@ export default {
         console.log(authEmail);
 
         async function displayDetails() {
+            const grpID = sessionStorage.getItem('currGroup');
             console.log('DOC ID: ' + grpID);
 
             // Display Current Group Details
@@ -67,6 +67,7 @@ export default {
     methods: {
         async save() {
             try {
+                const grpID = sessionStorage.getItem('currGroup');
                 const groupDescription = document
                     .getElementById('groupDescription')
                     .value.toString();

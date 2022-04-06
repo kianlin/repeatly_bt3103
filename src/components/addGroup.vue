@@ -63,6 +63,10 @@ async function getUser(email) {
     }
 }
 
+function reset() {
+    this.$refs.studentGroupForm.reset();
+}
+
 export default {
     name: 'addGroup',
     methods: {
@@ -104,6 +108,7 @@ export default {
                     console.log(error);
                 }
                 await this.$router.push({ name: 'groupsPage' });
+                reset();
             } catch (error) {
                 console.log(error);
                 console.log('Add Group failed');
