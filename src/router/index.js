@@ -14,6 +14,7 @@ import groupsPage from '@/views/groupsPage';
 import groupAddition from '@/views/groupAddition';
 import groupDetails from '@/views/groupDetails';
 import groupEdit from '@/views/groupEdit';
+import groupDeckCreation from '@/views/groupDeckCreation';
 
 const routes = [
     {
@@ -96,6 +97,11 @@ const routes = [
         path: '/editGroup',
         name: 'editGroup',
         component: groupEdit
+    },
+    {
+        path: '/createGroupDeck',
+        name: 'createGroupDeck',
+        component: groupDeckCreation
     }
 ];
 const router = createRouter({
